@@ -83,6 +83,19 @@ namespace Visus.Stl.Maths {
         }
 
         /// <summary>
+        /// Applies <see cref="LoessSettings.Degree"/> and
+        /// <see cref="LoessSettings.Width"/> from <paramref name="settings"/>.
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <returns></returns>
+        public LoessInterpolatorBuilder SetSettings(LoessSettings settings) {
+            _ = settings ?? throw new ArgumentNullException(nameof(settings));
+            this._degree = settings.Degree;
+            this._width = settings.Width;
+            return this;
+        }
+
+        /// <summary>
         /// Sets the width of the interpolator.
         /// </summary>
         /// <param name="width">The width of the interpolator.</param>

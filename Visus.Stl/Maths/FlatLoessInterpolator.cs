@@ -8,6 +8,9 @@ using System.Collections.Generic;
 
 namespace Visus.Stl.Maths {
 
+    /// <summary>
+    /// A LOESS interpolation that does not update the weights.
+    /// </summary>
     public sealed class FlatLoessInterpolator : LoessInterpolatorBase {
 
         /// <summary>
@@ -24,6 +27,7 @@ namespace Visus.Stl.Maths {
         /// <inheritdoc />
         public override int Degree => 0;
 
+        /// <inheritdoc />
         protected override void UpdateWeights(double x, int left, int right) {
             // Nothing to do.
         }

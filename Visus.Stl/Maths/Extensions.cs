@@ -16,6 +16,31 @@ namespace Visus.Stl.Maths {
     public static class Extensions {
 
         /// <summary>
+        /// Clamp <paramref name="value"/> to the range of
+        /// [<paramref name="min"/>, <paramref name="max"/>].
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <param name="value"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public static TValue Clamp<TValue>(this TValue value, TValue min,
+                TValue max) where TValue : IComparable<TValue> {
+            if (max.CompareTo(min) < 0) {
+                (min, max) = (max, min);
+            }
+
+            if (value.CompareTo(min) < 0) {
+                return min;
+            } else if (value.CompareTo(max) > 0) {
+                return max;
+            } else {
+                return value;
+            }
+        }
+
+
+        /// <summary>
         /// Computes the cube of the given number.
         /// </summary>
         /// <param name="that">The number to compute the cube of.</param>

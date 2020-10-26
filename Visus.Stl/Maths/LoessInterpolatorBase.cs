@@ -8,6 +8,10 @@ namespace Visus.Stl.Maths {
     /// <summary>
     /// Superclass for LOESS smoothing implementations of different degreee.
     /// </summary>
+    /// <remarks>
+    /// Roughly ported from the Java implementation at
+    /// https://github.com/ServiceNow/stl-decomp-4j/blob/master/stl-decomp-4j/src/main/java/com/github/servicenow/ds/stats/stl/LoessInterpolator.java
+    /// </remarks>
     public abstract class LoessInterpolatorBase {
 
         #region Public properties
@@ -46,7 +50,7 @@ namespace Visus.Stl.Maths {
         /// <summary>
         /// Gets the smoothing width of the LOESS smoother.
         /// </summary>
-        public int? Width {
+        public int Width {
             get;
         }
 
@@ -70,7 +74,7 @@ namespace Visus.Stl.Maths {
          *            int rightmost coordinate to use from the input data
          * @return Double interpolated value, or null if interpolation could not be done
          */
-        double? SmoothOnePoint(double x, int left, int right) {
+        public double? Smooth(double x, int left, int right) {
 
             // Ordinarily, one doesn't do linear regression one x-value at a time, but LOESS does since
             // each x-value will typically have a different window. As a result, the weighted linear regression
@@ -196,10 +200,16 @@ namespace Visus.Stl.Maths {
                 return State.WeightFailed;
             }
 
-            // Normalize the weights.
+            // Normalise the weights.
+#if PARALLEL_LOESS
             Parallel.For(left, right, (i) => {
                 this.Weights[i] /= totalWeight;
             });
+#else // PARALLEL_LOESS
+            for (int i = left; i <= right; ++i) {
+                this.Weights[i] /= totalWeight;
+            }
+#endif // PARALLEL_LOESS
 
             return (lambda > 0) ? State.LinearOK : State.LinearFailed;
         }
