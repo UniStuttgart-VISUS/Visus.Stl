@@ -21,7 +21,7 @@ namespace Visus.Stl.Maths {
     /// https://github.com/apache/commons-math/blob/master/src/main/java/org/apache/commons/math4/analysis/interpolation/LoessInterpolator.java
     /// and Dominik Herr's code.</para>
     /// </remarks>
-    public sealed class LoessInterpolator {
+    sealed class LoessInterpolator {
 
         #region Public constants
         /// <summary>

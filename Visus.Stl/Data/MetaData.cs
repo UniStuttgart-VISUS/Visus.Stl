@@ -34,9 +34,9 @@ namespace Visus.Stl.Data {
         public MetaData(int numberOfObservations,
                 int subseriesLength,
                 int seasonalWindow,
-                LoessDegree seasonalLoessDegree = LoessDegree.Zero,
+                int seasonalLoessDegree = 0,
                 int? trendWindow = null,
-                LoessDegree trendLoessDegree = LoessDegree.One,
+                int trendLoessDegree = 1,
                 bool robustCalculation = false) {
             //                NumberOfObservations = numberOfObservations;
             SubseriesLength = subseriesLength;
@@ -54,8 +54,8 @@ namespace Visus.Stl.Data {
 
         public MetaData(TimeSpan aggregationLevel,
                 TimeSpan subseriesFrequency,
-                LoessDegree seasonalLoessDegree = LoessDegree.Zero,
-                LoessDegree trendLoessDegree = LoessDegree.One,
+                int seasonalLoessDegree = 0,
+                int trendLoessDegree = 1,
                 bool robustCalculation = false) {
             AggregationLevel = aggregationLevel;
             SubseriesFrequency = subseriesFrequency;
@@ -116,14 +116,26 @@ namespace Visus.Stl.Data {
             }
         }
 
-        public LoessDegree SeasonalLoessDegree {
-            get;
-            set;
+        public int SeasonalLoessDegree {
+            get => this._seasonalLoessDegree;
+            set {
+                if ((value < 0) || (value > 1)) {
+                    throw new ArgumentException($"{nameof(SeasonalLoessDegree)} "
+                        + $"must be within [0, 1], but is {value}.");
+                }
+                this._seasonalLoessDegree = value;
+            }
         }
 
-        public LoessDegree TrendLoessDegree {
-            get;
-            set;
+        public int TrendLoessDegree {
+            get => this._trendLoessDegree;
+            set {
+                if ((value < 0) || (value > 1)) {
+                    throw new ArgumentException($"{nameof(TrendLoessDegree)} "
+                        + $"must be within [0, 1], but is {value}.");
+                }
+                this._trendLoessDegree = value;
+            }
         }
 
 
@@ -162,19 +174,6 @@ namespace Visus.Stl.Data {
             }
         }
 
-        public double SeasonDegree {
-            get {
-                switch (SeasonalLoessDegree) {
-                    case LoessDegree.Zero:
-                        return 0;
-                    case LoessDegree.One:
-                        return 1;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-
         /// <summary>
         /// in STL this is nt
         /// </summary>
@@ -187,20 +186,6 @@ namespace Visus.Stl.Data {
                 return (int) _trendWindow;
             }
         }
-
-        public double TrendDegree {
-            get {
-                switch (TrendLoessDegree) {
-                    case LoessDegree.Zero:
-                        return 0;
-                    case LoessDegree.One:
-                        return 1;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-
 
         public int LowPassWindow {
             get {
@@ -216,40 +201,21 @@ namespace Visus.Stl.Data {
             set { _robustCalculation = value; }
         }
 
-        public LoessDegree TrendLoessDegree1 { get => this._trendLoessDegree; set => this._trendLoessDegree = value; }
-
-
 
         /**
-
         * Checks consistency of configuration parameters.
-
         *
-
         * <p>
-
         *   Must be called each time this configuration is used.
-
         * </p>
-
         *
-
         * <p>
-
         *   There must be at least two observations, and at least two periods
-
         *   in the data.
-
         * </p>
-
         *
-
         * @param numberOfDataPoints The number of data points in the target series.
-
         */
-
-
-
         internal void Check(int numberOfDataPoints) {
 
             //                TrendComponentBandwidth = DefaultTrendBandwidth;
@@ -308,8 +274,8 @@ namespace Visus.Stl.Data {
         private int _subseriesLength = 168;
         private int? _seasonalWindow = null; //TODO set from null to 151 for debugging
         private double? _trendWindow; // nt
-        private LoessDegree _seasonalLoessDegree;
-        private LoessDegree _trendLoessDegree;
+        private int _seasonalLoessDegree;
+        private int _trendLoessDegree;
         //            private TimeIntervalEnum _trendWindowInterval;
         private int RobustInnerLoopPasses = 1;
         private int RobustOuterLoopPasses = 5;
