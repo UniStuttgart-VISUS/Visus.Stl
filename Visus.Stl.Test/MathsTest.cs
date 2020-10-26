@@ -1,3 +1,8 @@
+// <copyright file="MathsTest.cs" company="Universität Stuttgart">
+// Copyright © 2020 Visualisierungsinstitut der Universität Stuttgart. All rights reserved.
+// </copyright>
+// <author>Christoph Müller</author>
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using Visus.Stl.Maths;
@@ -10,6 +15,14 @@ namespace Visus.Stl.Test {
     /// </summary>
     [TestClass]
     public class MathsTest {
+
+        [TestMethod]
+        public void TestCube() {
+            Assert.AreEqual(-1.0, (-1.0).Cube());
+            Assert.AreEqual(1.0, 1.0.Cube());
+            Assert.AreEqual(-8.0, (-2.0).Cube());
+            Assert.AreEqual(8.0, 2.0.Cube());
+        }
 
         [TestMethod]
         public void TestMedian() {
@@ -32,6 +45,14 @@ namespace Visus.Stl.Test {
                 var list = new List<int> { 1 };
                 Assert.AreEqual(1, list.Median());
             }
+        }
+
+        [TestMethod]
+        public void TestSquare() {
+            Assert.AreEqual(1.0, (-1.0).Square());
+            Assert.AreEqual(1.0, 1.0.Square());
+            Assert.AreEqual(4.0, (-2.0).Square());
+            Assert.AreEqual(4.0, 2.0.Square());
         }
 
         [TestMethod]
@@ -60,6 +81,14 @@ namespace Visus.Stl.Test {
                 Assert.AreEqual(2, list[1]);
                 Assert.AreEqual(3, list[2]);
             }
+        }
+
+        [TestMethod]
+        public void TestTricube() {
+            Assert.AreEqual(0.0, (-1.0).Tricube());
+            Assert.AreEqual(1.0, 0.0.Tricube());
+            Assert.AreEqual(0.0, 1.0.Tricube());
+            Assert.AreEqual(0.6699, 0.5.Tricube(), 0.0001);
         }
     }
 }

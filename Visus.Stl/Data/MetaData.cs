@@ -22,7 +22,7 @@ namespace Visus.Stl.Data {
 
         #region Public constructors
         /// <summary>
-        /// Constructor for custom window sizes
+        /// Constructor for custom window sizes.
         /// </summary>
         /// <param name="numberOfObservations"></param>
         /// <param name="subseriesLength"></param>
@@ -120,8 +120,9 @@ namespace Visus.Stl.Data {
             get => this._seasonalLoessDegree;
             set {
                 if ((value < 0) || (value > 1)) {
-                    throw new ArgumentException($"{nameof(SeasonalLoessDegree)} "
-                        + $"must be within [0, 1], but is {value}.");
+                    throw new ArgumentException(
+                        $"{nameof(SeasonalLoessDegree)} must be within [0, 1], "
+                        + $"but is {value}.");
                 }
                 this._seasonalLoessDegree = value;
             }

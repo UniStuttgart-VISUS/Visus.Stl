@@ -16,6 +16,35 @@ namespace Visus.Stl.Maths {
     public static class Extensions {
 
         /// <summary>
+        /// Computes the cube of the given number.
+        /// </summary>
+        /// <param name="that">The number to compute the cube of.</param>
+        /// <returns>The cube of <paramref name="that"/>.</returns>
+        public static double Cube(this double that) {
+            return that * that * that;
+        }
+
+        /// <summary>
+        /// Answer whether <paramref name="that"/> is a finite real number.
+        /// </summary>
+        /// <param name="that">The number to be checked.</param>
+        /// <returns><c>true</c> if <paramref name="that"/> is a finite real
+        /// number, <c>false</c> otherwise.</returns>
+        public static bool IsFiniteReal(this double that) {
+            return !double.IsInfinity(that) && !double.IsNaN(that);
+        }
+
+        /// <summary>
+        /// Answer whether <paramref name="that"/> is a finite real number.
+        /// </summary>
+        /// <param name="that">The number to be checked.</param>
+        /// <returns><c>true</c> if <paramref name="that"/> is a finite real
+        /// number, <c>false</c> otherwise.</returns>
+        public static bool IsFiniteReal(this double? that) {
+            return (that?.IsFiniteReal() == true);
+        }
+
+        /// <summary>
         /// Determines the media of the given list.
         /// </summary>
         /// <remarks>
@@ -58,6 +87,15 @@ namespace Visus.Stl.Maths {
         }
 
         /// <summary>
+        /// Computes the square of the given number.
+        /// </summary>
+        /// <param name="that">The number to compute the square of.</param>
+        /// <returns>The square of <paramref name="that"/>.</returns>
+        public static double Square(this double that) {
+            return that * that;
+        }
+
+        /// <summary>
         /// Swaps two elements in a list.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -68,6 +106,19 @@ namespace Visus.Stl.Maths {
             if (i != j) {
                 (list[i], list[j]) = (list[j], list[i]);
             }
+        }
+
+        /// <summary>
+        /// Compute the 
+        /// <a href="http://en.wikipedia.org/wiki/Local_regression#Weight_function">tricube</a>
+        /// weight function.
+        /// </summary>
+        /// <param name="that">The number to compute the tricube function
+        /// for.</param>
+        /// <returns><c>(1 - |x|^3)^3</c></returns>
+        public static double Tricube(this double that) {
+            var a = Math.Abs(that);
+            return (a < 1) ? (1 - a.Cube()).Cube() : 0;
         }
 
         #region Private methods
