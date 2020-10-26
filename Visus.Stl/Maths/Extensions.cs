@@ -31,7 +31,7 @@ namespace Visus.Stl.Maths {
         /// <returns><c>true</c> if <paramref name="that"/> is a finite real
         /// number, <c>false</c> otherwise.</returns>
         public static bool IsFiniteReal(this double that) {
-            return !double.IsInfinity(that) && !double.IsNaN(that);
+            return (!double.IsInfinity(that) && !double.IsNaN(that));
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace Visus.Stl.Maths {
         }
 
         /// <summary>
-        /// Compute the 
+        /// Compute the
         /// <a href="http://en.wikipedia.org/wiki/Local_regression#Weight_function">tricube</a>
         /// weight function.
         /// </summary>

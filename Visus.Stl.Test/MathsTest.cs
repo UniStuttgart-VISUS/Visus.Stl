@@ -14,7 +14,7 @@ namespace Visus.Stl.Test {
     /// Performs test for the underlying maths operations.
     /// </summary>
     [TestClass]
-    public class MathsTest {
+    public sealed class MathsTest {
 
         [TestMethod]
         public void TestCube() {
