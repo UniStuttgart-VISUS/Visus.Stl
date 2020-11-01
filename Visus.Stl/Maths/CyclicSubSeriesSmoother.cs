@@ -6,7 +6,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Text;
 
 
 namespace Visus.Stl.Maths {
@@ -20,7 +19,7 @@ namespace Visus.Stl.Maths {
     /// </remarks>
     internal sealed class CyclicSubSeriesSmoother {
 
-       //     /**
+        //     /**
         //* Use Builder to simplify complex construction patterns.
         //*/
         //     public static class Builder {
@@ -173,6 +172,7 @@ namespace Visus.Stl.Maths {
         //         }
         //     }
 
+        #region Public constructors
         /// <summary>
         /// Initialises a new instance.
         /// </summary>
@@ -230,6 +230,21 @@ namespace Visus.Stl.Maths {
         }
 
         /// <summary>
+        /// Initialises a new instance.
+        /// </summary>
+        /// <param name="settings"></param>
+        /// <param name="dataLength"></param>
+        /// <param name="periodicity"></param>
+        /// <param name="backwardPeriods"></param>
+        /// <param name="forwardPeriods"></param>
+        public CyclicSubSeriesSmoother(LoessSettings settings, int dataLength,
+                int periodicity, int backwardPeriods, int forwardPeriods)
+            : this(settings.Width, settings.Degree, settings.Jump, dataLength,
+                  periodicity, backwardPeriods, forwardPeriods) { }
+        #endregion
+
+        #region Public methods
+        /// <summary>
         ///  Run the cyclic sub-series smoother on the specified data, with the
         ///  specified weights (ignored if <c>null</c>). The  sub-series are
         ///  reconstructed into a single series in <paramref name="smoothedData"/>.
@@ -244,6 +259,7 @@ namespace Visus.Stl.Maths {
             this.ComputeSmoothedSubSeries(weights != null);
             this.ReconstructExtendedDataFromSubSeries(smoothedData);
         }
+        #endregion
 
         #region Private methods
         private void ComputeSmoothedSubSeries(bool useResiduals) {

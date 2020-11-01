@@ -67,14 +67,16 @@ namespace Visus.Stl.Maths {
         }
 
         /// <summary>
-        /// Applies <see cref="LoessSettings.Degree"/> and
-        /// <see cref="LoessSettings.Width"/> from <paramref name="settings"/>.
+        /// Applies <see cref="LoessSettings.Degree"/>,
+        /// <see cref="LoessSettings.Jump"/> <see cref="LoessSettings.Width"/>
+        /// from <paramref name="settings"/>.
         /// </summary>
         /// <param name="settings"></param>
         /// <returns></returns>
         public LoessSmootherBuilder SetSettings(LoessSettings settings) {
             _ = settings ?? throw new ArgumentNullException(nameof(settings));
             this._degree = settings.Degree;
+            this._jump = settings.Jump;
             this._width = settings.Width;
             return this;
         }

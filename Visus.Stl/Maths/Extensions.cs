@@ -6,7 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.Linq;
 
 namespace Visus.Stl.Maths {
 
@@ -38,7 +38,6 @@ namespace Visus.Stl.Maths {
                 return value;
             }
         }
-
 
         /// <summary>
         /// Computes the cube of the given number.
@@ -94,6 +93,41 @@ namespace Visus.Stl.Maths {
         //    return list.NthOrderStatistic(mid);
         //}
 
+
+        /// <summary>
+        /// Samples a new random number from a Gaussian distribution
+        /// </summary>
+        /// <remarks>
+        /// Implementation from https://stackoverflow.com/questions/218060/random-gaussian-variables
+        /// </remarks>
+        /// <param name="that"></param>
+        /// <param name="mean"></param>
+        /// <param name="standardDeviation"></param>
+        /// <returns></returns>
+        public static double NextGaussian(this Random that, double mean,
+                double standardDeviation) {
+            return mean + standardDeviation * that.NextGaussian();
+        }
+
+        /// <summary>
+        /// Samples a new random number from a Gaussian distribution
+        /// </summary>
+        /// <remarks>
+        /// Implementation from https://stackoverflow.com/questions/218060/random-gaussian-variables
+        /// </remarks>
+        /// <param name="that"></param>
+        /// <returns></returns>
+        public static double NextGaussian(this Random that) {
+            _ = that ?? throw new ArgumentNullException(nameof(that));
+
+            // Get two uniform ]0,1] random doubles.
+            var u1 = 1.0 - that.NextDouble();
+            var u2 = 1.0 - that.NextDouble();
+
+            return Math.Sqrt(-2.0 * Math.Log(u1))
+                * Math.Sin(2.0 * Math.PI * u2);
+        }
+
         /// <summary>
         /// Returns <paramref name="n"/>th smallest element from a list.
         /// </summary>
@@ -109,6 +143,55 @@ namespace Visus.Stl.Maths {
                 Random rng = null) where T : IComparable<T> {
             _ = that ?? throw new ArgumentNullException(nameof(that));
             return NthOrderStatistic(that, n, 0, that.Count - 1, rng);
+        }
+
+        /// <summary>
+        /// Compute the simple moving average of the given sequence of numbers
+        /// using the specified window size.
+        /// </summary>
+        /// <param name="that">The input data.</param>
+        /// <param name="window">The width of the moving average window.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="that"/>
+        /// is <c>null</c>.</exception>
+        public static double[] SimpleMovingAverage(
+                this IList<double> that, int window) {
+            _ = that ?? throw new ArgumentNullException(nameof(that));
+            var length = that.Count;
+
+            if (window < 1) {
+                throw new ArgumentException($"{nameof(window)} must be "
+                    + $"positive, but is {window}.");
+            }
+
+            var retval = new double[length - window + 1];
+
+            // The simple moving average picks up one point from the first
+            // "window" points of the original data and then 'length'
+            // - 'window' additional points for the rest of the data.
+            double windowSum = 0.0;
+            for (int i = 0; i < window; ++i) {
+                windowSum += that[i];
+            }
+            retval[0] = windowSum / window;
+
+            // Now roll through the additional data subtracting the contribution
+            // from the index that has left the window and adding the
+            // contribution from the next index to enter the window. Last window
+            // above was [0, window - 1], so we need to start by removing
+            // data[0] and adding data[window] and move forward until we add the
+            // last data point; i.e. until windowEnd == data.length - 1.
+            int windowEnd = window;
+            int windowStart = 0;
+            for (int i = 1; i < length - window + 1; ++i) {
+                // loops data.length - window + 1 - 1 = data.length - window times
+                windowSum += (that[windowEnd] - that[windowStart]);
+                ++windowStart;
+                ++windowEnd;
+                retval[i] = windowSum / window;
+            }
+
+            return retval;
         }
 
         /// <summary>
