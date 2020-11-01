@@ -1,12 +1,17 @@
-﻿using System;
+﻿// <copyright file="LoessSmoother.cs" company="Universität Stuttgart">
+// Copyright © 2020 Visualisierungsinstitut der Universität Stuttgart. All rights reserved.
+// </copyright>
+// <author>Christoph Müller</author>
+
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 
 namespace Visus.Stl.Maths {
 
     /// <summary>
-    /// 
+    /// LoessSmoother uses LOESS interpolation to compute a smoothed data set
+    /// from a regularly-spaced set of input data.
     /// </summary>
     /// <remarks>
     /// <para>Ported from
@@ -31,7 +36,7 @@ namespace Visus.Stl.Maths {
                 .SetExternalWeights(externalWeights)
                 .SetWidth(width)
                 .Build(data);
-            this.Jump = Math.Min(Jump, data.Count - 1);
+            this.Jump = Math.Max(Math.Min(jump, data.Count - 1), 1);
             this.Smoothed = new double[data.Count];
         }
         #endregion
@@ -59,7 +64,7 @@ namespace Visus.Stl.Maths {
         /// <summary>
         /// Gets the smoothed result.
         /// </summary>
-        public IList<double> Smoothed {
+        public double[] Smoothed {
             get;
         }
 
@@ -74,7 +79,7 @@ namespace Visus.Stl.Maths {
         /// Compute LOESS-smothed data for <see cref="Data"/>.
         /// </summary>
         /// <returns></returns>
-        public IList<double> Smooth() {
+        public double[] Smooth() {
             if (this.Data.Count == 1) {
                 this.Smoothed[0] = this.Data[0];
 
