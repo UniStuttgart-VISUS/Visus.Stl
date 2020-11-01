@@ -2,7 +2,17 @@
 using System.Collections.Generic;
 using System.Text;
 
+
 namespace Visus.Stl.Maths {
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>
+    /// <para>Ported from
+    /// https://github.com/ServiceNow/stl-decomp-4j/blob/master/stl-decomp-4j/src/main/java/com/github/servicenow/ds/stats/stl/LoessSmoother.java
+    /// </para>
+    /// </remarks>
     public sealed class LoessSmoother {
 
         #region Public constructors
