@@ -60,5 +60,28 @@ namespace Visus.Stl.Test {
             Assert.AreEqual(1, output.Length);
             Assert.AreEqual(42, output[0]);
         }
+
+        [TestMethod]
+        public void TestGenericSpaceEvenly() {
+            var input = new[] {
+                new DateTimePoint<int>(new DateTime(2020, 1, 1, 0, 0, 0), 0),
+                new DateTimePoint<int>(new DateTime(2020, 1, 1, 0, 0, 1), 1),
+                new DateTimePoint<int>(new DateTime(2020, 1, 1, 0, 0, 2), 2),
+                new DateTimePoint<int>(new DateTime(2020, 1, 1, 0, 0, 3), 2),
+                new DateTimePoint<int>(new DateTime(2020, 1, 1, 0, 0, 2, 3), 1),
+                new DateTimePoint<int>(new DateTime(2020, 1, 1, 0, 0, 5), 5),
+            };
+
+            var output = input.SpaceEvenly(TimeSpan.FromSeconds(1),
+                (e) => e.Time, (e) => e.Value, (l, r) => l + r, 0).ToArray();
+
+            Assert.AreEqual(6, output.Length);
+            Assert.AreEqual(0, output[0]);
+            Assert.AreEqual(1, output[1]);
+            Assert.AreEqual(2, output[2]);
+            Assert.AreEqual(3, output[3]);
+            Assert.AreEqual(0, output[4]);
+            Assert.AreEqual(5, output[5]);
+        }
     }
 }
