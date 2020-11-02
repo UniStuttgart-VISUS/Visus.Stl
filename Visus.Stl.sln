@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.Stl", "Visus.Stl\Visus.Stl.csproj", "{B33DB021-8532-43BA-878F-09ACCDE2B54B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Visus.Stl", "Visus.Stl\Visus.Stl.csproj", "{B33DB021-8532-43BA-878F-09ACCDE2B54B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Visus.Stl.Test", "Visus.Stl.Test\Visus.Stl.Test.csproj", "{AFF14C06-BB35-4889-9F16-F48E59B99721}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Visus.Stl.Test", "Visus.Stl.Test\Visus.Stl.Test.csproj", "{AFF14C06-BB35-4889-9F16-F48E59B99721}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B3EEA1FC-3EAA-4518-BDF5-B7629855CB1B}"
+	ProjectSection(SolutionItems) = preProject
+		LICENCE.md = LICENCE.md
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

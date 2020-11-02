@@ -2,6 +2,18 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Christoph Müller</Authors>
+    <Company>Visualisierungsinstitut der Universität Stuttgart</Company>
+    <Product>Seasonal Decomposition of Time Series by Loess .NET</Product>
+    <PackageId>stlnet</PackageId>
+    <Description>Implementation of the seasonal decomposition of time series by loess algorithm.</Description>
+    <Copyright>Copyright © 2020 Visualisierungsinstitut der Universität Stuttgart. All rights reserved.</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/UniStuttgart-VISUS/Visus.Stl</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/UniStuttgart-VISUS/Visus.Stl</RepositoryUrl>
+    <PackageTags>stl decomposition seasonal trend</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
 </Project>
