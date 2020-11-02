@@ -39,4 +39,18 @@ var input = new[] {
 var output = input.SpaceEvenly(TimeSpan.FromSeconds(1), (l, r) => l + r, 0).ToArray();
 ```
 
-There is a convenience method of `SpaceEvenly` for `DateTimePoint<double>` that can be directly used without specifying an aggregator and the neutral element.
+There is a convenience method of `SpaceEvenly` for `DateTimePoint<double>` that can be directly used without specifying an aggregator and the neutral element. There is also an even more generic version, which allows for mapping basically any type of structure by retrieving the time and the value via callbacks:
+
+```C#
+var input = new[] {
+    new DateTimePoint<int>(new DateTime(2020, 1, 1, 0, 0, 0), 0),
+    // Other data points
+};
+
+// Create an evenly spaced time series with one-second bins.
+var output = input.SpaceEvenly(TimeSpan.FromSeconds(1),
+    (e) => e.Time,
+    (e) => e.Value,
+    (l, r) => l + r,
+    0).ToArray();
+```
