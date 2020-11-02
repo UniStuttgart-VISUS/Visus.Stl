@@ -26,3 +26,17 @@ var seasonal = stl.Seasonal;
 var trend = stl.Trend;
 var residuals = stl.Residuals;
 ```
+
+In order to use data that are not equally spaced, we provide an extension method `SpaceEvenly` for pairs of `DateTime` and a value. In order to use this extension method, you need to specify the temporal length of a bin, an aggregator function that can sum data points falling into the same bin and a neutral element (the zero value).
+
+```C#
+var input = new[] {
+    new DateTimePoint<int>(new DateTime(2020, 1, 1, 0, 0, 0), 0),
+    // Other data points
+};
+
+// Create an evenly spaced time series with one-second bins.
+var output = input.SpaceEvenly(TimeSpan.FromSeconds(1), (l, r) => l + r, 0).ToArray();
+```
+
+There is a convenience method of `SpaceEvenly` for `DateTimePoint<double>` that can be directly used without specifying an aggregator and the neutral element.
