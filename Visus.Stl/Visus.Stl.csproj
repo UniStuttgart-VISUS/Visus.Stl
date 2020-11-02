@@ -14,6 +14,8 @@
     <RepositoryUrl>https://github.com/UniStuttgart-VISUS/Visus.Stl</RepositoryUrl>
     <PackageTags>stl decomposition seasonal trend</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
   </PropertyGroup>
 
 </Project>
