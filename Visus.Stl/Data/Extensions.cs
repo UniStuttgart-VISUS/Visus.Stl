@@ -73,5 +73,19 @@ namespace Visus.Stl.Data {
                 }
             }
         }
+
+        /// <summary>
+        /// Convenience method for spacing time series of <see cref="double"/>.
+        /// </summary>
+        /// <param name="that">The collection which is to be spaced evenly.
+        /// Note that this collection must be sorted. It is safe to pass
+        /// <c>null</c>.</param>
+        /// <param name="dt">The bin size.</param>
+        /// <returns>The evenly spaced values.</returns>
+        public static IEnumerable<double> SpaceEvenly(
+                this IEnumerable<DateTimePoint<double>> that,
+                TimeSpan dt) {
+            return SpaceEvenly(that, dt, (l, r) => l + r, 0);
+        }
     }
 }
