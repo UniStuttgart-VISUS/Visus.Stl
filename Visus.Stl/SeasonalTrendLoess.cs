@@ -1,6 +1,10 @@
-﻿using System;
+﻿// <copyright file="SeasonalTrendLoess.cs" company="Universität Stuttgart">
+// Copyright © 2020 Visualisierungsinstitut der Universität Stuttgart. All rights reserved.
+// </copyright>
+// <author>Christoph Müller</author>
+
+using System;
 using System.Collections.Generic;
-using System.Text;
 using Visus.Stl.Maths;
 
 
@@ -97,22 +101,22 @@ namespace Visus.Stl {
         public SeasonalTrendLoess(IList<double> data, int periodicity, int cntInner,
                 int cntOuter, LoessSettings seasonalSettings,
                 LoessSettings trendSettings, LoessSettings lowpassSettings) {
-            fData = data;
+            _data = data;
             int size = data.Count;
-            fPeriodLength = periodicity;
-            fSeasonalSettings = seasonalSettings;
-            fTrendSettings = trendSettings;
-            fLowpassSettings = lowpassSettings;
-            fInnerIterations = cntInner;
-            fRobustIterations = cntOuter;
-            fLoessSmootherFactory = new LoessSmootherBuilder()
+            _periodLength = periodicity;
+            _seasonalSettings = seasonalSettings;
+            _trendSettings = trendSettings;
+            _lowpassSettings = lowpassSettings;
+            _innerIterations = cntInner;
+            _outerIterations = cntOuter;
+            _loessSmootherFactory = new LoessSmootherBuilder()
                 .SetSettings(trendSettings);
-            fLowpassLoessFactory = new LoessSmootherBuilder()
+            _lowpassLoessFactory = new LoessSmootherBuilder()
                 .SetSettings(lowpassSettings);
-            fCyclicSubSeriesSmoother = new CyclicSubSeriesSmoother(
+            _cyclicSubSeriesSmoother = new CyclicSubSeriesSmoother(
                 seasonalSettings, size, periodicity, 1, 1);
-            fDetrend = new double[size];
-            fExtendedSeasonal = new double[size + 2 * fPeriodLength];
+            _detrend = new double[size];
+            _extendedSeasonal = new double[size + 2 * _periodLength];
         }
         #endregion
 
@@ -123,30 +127,30 @@ namespace Visus.Stl {
         /// <returns></returns>
         public Decomposition Decompose() {
             // TODO: Pass input data to decompose and reallocate buffers based on that size.
-            fDecomposition = new Decomposition(fData);
+            _decomposition = new Decomposition(_data);
 
             int outerIteration = 0;
             while (true) {
                 var useResidualWeights = (outerIteration > 0);
 
-                for (int i = 0; i < this.fInnerIterations; ++i) {
+                for (int i = 0; i < this._innerIterations; ++i) {
                     this.SmoothSeasonalSubCycles(useResidualWeights);
                     this.RemoveSeasonality();
                     this.UpdateSeasonalAndTrend(useResidualWeights);
                 }
 
-                if (++outerIteration > fRobustIterations) {
+                if (++outerIteration > _outerIterations) {
                     break;
                 }
 
-                fDecomposition.ComputeResidualWeights();
+                _decomposition.ComputeResidualWeights();
             }
 
-            fDecomposition.UpdateResiduals();
+            _decomposition.UpdateResiduals();
 
-            Decomposition result = fDecomposition;
+            Decomposition result = _decomposition;
 
-            fDecomposition = null;
+            _decomposition = null;
 
             return result;
         }
@@ -161,20 +165,20 @@ namespace Visus.Stl {
         /// The current estimate of the trend is removed, then the detrended
         /// data is separated into sub-series (e.g. all the Januaries, all the
         /// Februaries, etc., for yearly data), and these sub-series are
-        /// smoothed and extrapolated into <see cref="fExtendedSeasonal"/>.
+        /// smoothed and extrapolated into <see cref="_extendedSeasonal"/>.
         /// </remarks>
         /// <param name="useResidualWeights"></param>
         private void SmoothSeasonalSubCycles(bool useResidualWeights) {
-            var data = this.fDecomposition.Data;
-            var trend = this.fDecomposition.Trend;
-            var weights = this.fDecomposition.Weights;
+            var data = this._decomposition.Data;
+            var trend = this._decomposition.Trend;
+            var weights = this._decomposition.Weights;
 
             for (int i = 0; i < data.Count; ++i) {
-                this.fDetrend[i] = data[i] - trend[i];
+                this._detrend[i] = data[i] - trend[i];
             }
 
             var residualWeights = useResidualWeights ? weights : null;
-            this.fCyclicSubSeriesSmoother.Smooth(fDetrend, fExtendedSeasonal,
+            this._cyclicSubSeriesSmoother.Smooth(_detrend, _extendedSeasonal,
                 residualWeights);
         }
 
@@ -192,15 +196,15 @@ namespace Visus.Stl {
             // extendedSeasonal.length == data.length + 2 * periodicity
             //
             // and the length after each pass is.................................
-            double[] pass1 = this.fExtendedSeasonal.SimpleMovingAverage(
-                this.fPeriodLength);    // data.length + periodLength + 1
-            double[] pass2 = pass1.SimpleMovingAverage(this.fPeriodLength);// data.length + 2
+            double[] pass1 = this._extendedSeasonal.SimpleMovingAverage(
+                this._periodLength);    // data.length + periodLength + 1
+            double[] pass2 = pass1.SimpleMovingAverage(this._periodLength);// data.length + 2
             double[] pass3 = pass2.SimpleMovingAverage(3);  // data.length
 
             // assert pass3.length == fData.length; // testing sanity check.
 
-            var lowPassLoess = this.fLowpassLoessFactory.Build(pass3);
-            this.fDeSeasonalized = lowPassLoess.Smooth();
+            var lowPassLoess = this._lowpassLoessFactory.Build(pass3);
+            this._deSeasonalised = lowPassLoess.Smooth();
         }
 
         /// <summary>
@@ -210,14 +214,14 @@ namespace Visus.Stl {
         /// </summary>
         /// <param name="useResidualWeights"></param>
         private void UpdateSeasonalAndTrend(bool useResidualWeights) {
-            var data = this.fDecomposition.Data;
-            var trend = this.fDecomposition.Trend;
-            var weights = this.fDecomposition.Weights;
-            var seasonal = this.fDecomposition.Seasonal;
+            var data = this._decomposition.Data;
+            var trend = this._decomposition.Trend;
+            var weights = this._decomposition.Weights;
+            var seasonal = this._decomposition.Seasonal;
 
             for (int i = 0; i < data.Count; ++i) {
-                seasonal[i] = this.fExtendedSeasonal[fPeriodLength + i]
-                    - this.fDeSeasonalized[i];
+                seasonal[i] = this._extendedSeasonal[_periodLength + i]
+                    - this._deSeasonalised[i];
                 trend[i] = data[i] - seasonal[i];
             }
 
@@ -225,7 +229,7 @@ namespace Visus.Stl {
             // dumpDebugData("trend0", trend);
 
             var residualWeights = useResidualWeights ? weights : null;
-            var trendSmoother = this.fLoessSmootherFactory
+            var trendSmoother = this._loessSmootherFactory
                 .SetExternalWeights(residualWeights)
                 .Build(trend);
             Array.Copy(trendSmoother.Smooth(), trend, trend.Length);
@@ -233,22 +237,20 @@ namespace Visus.Stl {
         #endregion
 
         #region Private fields
-        private IList<double> fData;
-
-        private Decomposition fDecomposition;
-
-        private int fPeriodLength;
-        private LoessSettings fSeasonalSettings;
-        private LoessSettings fTrendSettings;
-        private LoessSettings fLowpassSettings;
-        private int fInnerIterations;
-        private int fRobustIterations;
-        private double[] fDetrend;
-        private double[] fExtendedSeasonal;
-        private double[] fDeSeasonalized; // TODO: Garbage - can this be made in-place?
-        private CyclicSubSeriesSmoother fCyclicSubSeriesSmoother;
-        private LoessSmootherBuilder fLoessSmootherFactory;
-        private LoessSmootherBuilder fLowpassLoessFactory;
+        private CyclicSubSeriesSmoother _cyclicSubSeriesSmoother;
+        private IList<double> _data;
+        private Decomposition _decomposition;
+        private double[] _deSeasonalised; // TODO: Garbage - can this be made in-place?
+        private double[] _detrend;
+        private double[] _extendedSeasonal;
+        private int _innerIterations;
+        private LoessSmootherBuilder _loessSmootherFactory;
+        private LoessSmootherBuilder _lowpassLoessFactory;
+        private LoessSettings _lowpassSettings;
+        private int _outerIterations;
+        private int _periodLength;
+        private LoessSettings _seasonalSettings;
+        private LoessSettings _trendSettings;
         #endregion
     }
 }
