@@ -4,6 +4,8 @@
 // <author>Christoph Müller</author>
 
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 
 namespace Visus.Stl.Maths {
@@ -46,7 +48,8 @@ namespace Visus.Stl.Maths {
             if (x2Mean > 0.000001 * range.Square()) {
                 double beta = (x - xMean) / x2Mean;
 #if PARALLEL_LOESS
-                Parallel.For(left, right, (i) => {
+                Debug.Assert(right < this.Weights.Count - 1);
+                Parallel.For(left, right + 1, (i) => {
                     this.Weights[i] *= (1.0 + beta * (i - xMean));
                 });
 #else // PARALLEL_LOESS

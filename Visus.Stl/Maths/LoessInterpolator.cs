@@ -21,7 +21,7 @@ namespace Visus.Stl.Maths {
     /// https://github.com/apache/commons-math/blob/master/src/main/java/org/apache/commons/math4/analysis/interpolation/LoessInterpolator.java
     /// and Dominik Herr's code.</para>
     /// </remarks>
-    sealed class LoessInterpolator {
+    internal sealed class LoessInterpolator {
 
         #region Public constants
         /// <summary>
@@ -347,12 +347,15 @@ namespace Visus.Stl.Maths {
 
         /// <summary>
         /// Given an index interval into xval that embraces a certain number of
-        /// points closest to xval[i-1], update the interval so that it embraces
-        /// the same number of points closest to xval[i]
+        /// points closest to <paramref name="xval"/>[<paramref name="i"/> - 1],
+        /// update the interval so that it embraces the same number of points
+        /// closest to <paramref name="xval"/>[<paramref name="i"/>].
         /// </summary>
-        /// <param name="xval">arguments array.</param>
-        /// <param name="i">the index around which the new interval should be computed.</param>
-        /// <param name="bandwidthInterval">a two-element array {left, right} such that: <para/>
+        /// <param name="xval">The arguments array.</param>
+        /// <param name="i">The index around which the new interval should be
+        /// computed.</param>
+        /// <param name="bandwidthInterval">A two-element array { left, right }
+        /// such that: <para/>
         /// <tt>(left==0 or xval[i] - xval[left-1] > xval[right] - xval[i])</tt>
         /// <para/> and also <para/>
         /// <tt>(right==xval.length-1 or xval[right+1] - xval[i] > xval[i] - xval[left])</tt>.

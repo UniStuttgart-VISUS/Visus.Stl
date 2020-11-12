@@ -1,5 +1,11 @@
-﻿using System;
+﻿// <copyright file="LoessInterpolatorBase.cs" company="Universität Stuttgart">
+// Copyright © 2020 Visualisierungsinstitut der Universität Stuttgart. All rights reserved.
+// </copyright>
+// <author>Christoph Müller</author>
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 
@@ -27,13 +33,6 @@ namespace Visus.Stl.Maths {
         /// </summary>
         public abstract int Degree {
             get;
-            //set {
-            //    if ((value < 0) || (value > 2)) {
-            //        throw new ArgumentException($"{nameof(this.Degree)} must "
-            //            + $"be within [0, 2], but is {value}.");
-            //    }
-            //    this._degree = value;
-            //}
         }
 
         /// <summary>
@@ -62,25 +61,34 @@ namespace Visus.Stl.Maths {
         }
         #endregion
 
-        /**
-         * Given a set of data on the regular grid {left, left+1, ..., right-1, right}, computed the LOESS-smoothed value at
-         * the position x and return it. If the value can't be computed, return null.
-         *
-         * @param x
-         *            double x-coordinate at which we want to compute an estimate of y
-         * @param left
-         *            int leftmost coordinate to use from the input data
-         * @param right
-         *            int rightmost coordinate to use from the input data
-         * @return Double interpolated value, or null if interpolation could not be done
-         */
+        /// <summary>
+        /// Given a set of data on the regular grid { <paramref name="left"/>,
+        /// <paramref name="left"/> + 1, ..., <paramref name="right"/> - 1,
+        /// <paramref name="right"/> }, computed the LOESS-smoothed value at
+        /// <paramref name="x"/>.If the value can't be computed, return null.
+        /// </summary>
+        /// <remarks>
+        /// <para>If the smoothed value cannot be computed, <c>null</c> will be
+        /// returned.</para>
+        /// <para>This method is not state-invariant as it changes the
+        /// <see cref="Weights"/>.</para>
+        /// </remarks>
+        /// <param name="x">Abscissa where we want to compute an estimate of y.
+        /// </param>
+        /// <param name="left">The leftmost position to use from the input data.
+        /// </param>
+        /// <param name="right">The rightmost position to use from the input
+        /// data.</param>
+        /// <returns>The interpolated value, or <c>null</c> if the interpolation
+        /// could not be performed.</returns>
         public double? Smooth(double x, int left, int right) {
+            // Ordinarily, one doesn't do linear regression one x-value at a
+            // time, but LOESS does since each x-value will typically have a
+            // different window. As a result, the weighted linear regression
+            // is recast as a linear operation on the input data, weighted by
+            // 'Weights'.
 
-            // Ordinarily, one doesn't do linear regression one x-value at a time, but LOESS does since
-            // each x-value will typically have a different window. As a result, the weighted linear regression
-            // is recast as a linear operation on the input data, weighted by this.fWeights.
-
-            State state = this.ComputeNeighbourhoodWeights(x, left, right);
+            var state = this.ComputeNeighbourhoodWeights(x, left, right);
 
             if (state == State.WeightFailed) {
                 return null;
@@ -202,7 +210,8 @@ namespace Visus.Stl.Maths {
 
             // Normalise the weights.
 #if PARALLEL_LOESS
-            Parallel.For(left, right, (i) => {
+            Debug.Assert(right < this.Weights.Count - 1);
+            Parallel.For(left, right + 1, (i) => {
                 this.Weights[i] /= totalWeight;
             });
 #else // PARALLEL_LOESS

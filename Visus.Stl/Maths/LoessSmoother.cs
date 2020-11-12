@@ -5,7 +5,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 
 namespace Visus.Stl.Maths {
 
@@ -90,6 +90,8 @@ namespace Visus.Stl.Maths {
                 if (this.Width >= this.Data.Count) {
                     left = 0;
                     right = this.Data.Count - 1;
+                    // Note: This cannot be parallelised, because it uses the
+                    // state in 'Interpolator'.
                     for (int i = 0; i < this.Data.Count; i += this.Jump) {
                         var y = this.Interpolator.Smooth(i, left, right);
                         this.Smoothed[i] = y ?? this.Data[i];
@@ -99,8 +101,10 @@ namespace Visus.Stl.Maths {
                     int halfWidth = (this.Width + 1) / 2;
                     left = 0;
                     right = this.Width - 1;
+
                     for (int i = 0; i < this.Data.Count; ++i) {
-                        if ((i >= halfWidth) && (right != this.Data.Count - 1)) {
+                        if ((i >= halfWidth)
+                                && (right != this.Data.Count - 1)) {
                             ++left;
                             ++right;
                         }
@@ -143,7 +147,8 @@ namespace Visus.Stl.Maths {
                     // Third branch for  i = [ 9, 10, 11, ..., 131, 132, 133]; 125 points
                     //                left = [ 0,  1,  2, ..., 122, 123, 124]
                     //               right = [18, 19, 20, ..., 140, 141, 142]; right - left = 18
-                    int halfWidth = (this.Width + 1) / 2;
+                    var halfWidth = (this.Width + 1) / 2;
+
                     for (int i = 0; i < this.Data.Count; i += this.Jump) {
                         if (i < halfWidth - 1) {
                             left = 0;
@@ -176,11 +181,20 @@ namespace Visus.Stl.Maths {
                         // logSmoothedPoint(last, smooth[last]);
 
                         if (lastSmoothedPos != last - 1) {
-                            double slope = (this.Smoothed[last] - this.Smoothed[lastSmoothedPos]) / (last - lastSmoothedPos);
+                            var slope = (this.Smoothed[last]
+                                - this.Smoothed[lastSmoothedPos])
+                                / (last - lastSmoothedPos);
+#if PARALLEL_LOESS
+                            Parallel.For(lastSmoothedPos + 1, last, (j) => {
+                                this.Smoothed[j] = this.Smoothed[lastSmoothedPos]
+                                    + slope * (j - lastSmoothedPos);
+                            });
+#else // PARALLEL_LOESS
                             for (int j = lastSmoothedPos + 1; j < last; ++j) {
                                 this.Smoothed[j] = this.Smoothed[lastSmoothedPos] + slope * (j - lastSmoothedPos);
                                 // logInterpolatedPoint(j, smooth[j]);
                             }
+#endif // PARALLEL_LOESS
                         }
                     }
                 }
